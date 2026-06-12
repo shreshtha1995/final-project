@@ -40,7 +40,7 @@ public class ListingCleanupScheduler {
 
     /** Day 7: prompt providers (email) and surface the re-confirm button. */
     void sendReconfirmReminders() {
-        LocalDateTime cutoff = LocalDateTime.now().minusDays(PostingService.RECONFIRM_AFTER_DAYS);
+        LocalDateTime cutoff = LocalDateTime.now().minusDays(PostingSupport.RECONFIRM_AFTER_DAYS);
         List<Posting> due = postingRepository
                 .findByStatusAndReminderSentFalseAndCreatedAtBefore(PostingStatus.AVAILABLE, cutoff);
         for (Posting p : due) {
