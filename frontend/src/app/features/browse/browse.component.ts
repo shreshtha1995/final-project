@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CurrencyPipe } from '@angular/common';
@@ -136,3 +137,19 @@ export class BrowseComponent implements OnInit {
   imgUrl(url: string): string { return url.startsWith('http') ? url : API_ORIGIN + url; }
   pgType(p: string): string { return p === 'MALE_ONLY' ? 'Gents' : p === 'FEMALE_ONLY' ? 'Ladies' : 'Co-Living'; }
 }
+=======
+import { Component } from '@angular/core';
+
+/** STUB — implemented by M4 · Browse Rooms. See TEAM_PLAN.md. */
+@Component({
+  selector: 'app-browse',
+  template: `
+    <section class="card stub">
+      <h2>Browse Rooms</h2>
+      <p class="muted">Coming soon — owned by <strong>M4 · Browse (filters + detail)</strong>.</p>
+    </section>
+  `,
+  styles: [`.stub { max-width: 560px; margin: 48px auto; text-align: center; }`]
+})
+export class BrowseComponent {}
+>>>>>>> origin/main
