@@ -1,0 +1,57 @@
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px; margin-bottom: 18px;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat .num {
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--brand);
+}
+
+.add-card {
+  max-width: 680px;
+  margin-bottom: 18px;
+}
+
+.add-row {
+  align-items: flex-start;
+}
+
+.add-btn-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.add-btn-col button {
+  margin: 0;
+}
+
+.confirm-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.danger-link {
+  color: var(--danger);
+}
+
+.col-center {
+  text-align: center;
+}
+
+td .badge {
+  white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+  .stats {
+    grid-template-columns: 1fr 1fr;
+  }
+}

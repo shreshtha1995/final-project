@@ -1,14 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { AdminService } from './admin.service';
+import { DirectoryEntry, IdType, UserSummary } from '../../models/models';
 
-/** STUB — implemented by M2 · Super Admin. See TEAM_PLAN.md. */
+type Filter = 'ALL' | 'EMPLOYEE' | 'CANDIDATE';
+
+/** Super Admin panel: view, add, filter, paginate and delete valid Cognizant IDs. */
 @Component({
   selector: 'app-admin',
-  template: `
-    <section class="card stub">
-      <h2>Admin Panel</h2>
-      <p class="muted">Coming soon — owned by <strong>M2 · Super Admin</strong>.</p>
-    </section>
-  `,
-  styles: [`.stub { max-width: 560px; margin: 48px auto; text-align: center; }`]
+  imports: [FormsModule],
+  templateUrl: './admin.component.html',
+  styleUrl: './admin.component.css'
 })
 export class AdminComponent {}
