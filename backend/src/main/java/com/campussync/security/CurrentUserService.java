@@ -3,6 +3,7 @@ package com.campussync.security;
 import com.campussync.exception.ApiException;
 import com.campussync.model.User;
 import com.campussync.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -10,12 +11,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class CurrentUserService {
 
-    private final UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-    public CurrentUserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
+    // get the Current user
+    
     public User get() {
         var auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || auth.getName() == null) {
