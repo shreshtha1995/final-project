@@ -40,7 +40,13 @@ public class PostingSupport {
     }
 
     public int bedsFor(SharingType type) {
-        return type == SharingType.TRIPLE ? 3 : 2;
+        if(type == SharingType.TRIPLE) {
+            return 3;
+        } else if(type == SharingType.DOUBLE) {
+            return 2;
+        } else {
+            throw ApiException.badRequest("Invalid sharing type: " + type);
+        }
     }
 
     public void validateBeds(int availableBeds, int totalBeds) {
@@ -60,10 +66,15 @@ public class PostingSupport {
         }
     }
 
+    // Convert blank strings to null. This is used in the query service so that the repository query can ignore nulls.
     public String blankToNull(String s) {
-        return (s == null || s.isBlank()) ? null : s;
+        if(s == null || s.isBlank()) {
+            return null;
+        }
+        return s;
     }
 
+    // Helper to check if a string is blank (null or empty after trimming).
     private boolean isBlank(String s) {
         return s == null || s.isBlank();
     }

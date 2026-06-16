@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A vacant-bed listing created by a Provider.
- * Food/service ratings + reviews are mandatory (enforced in the service/DTO layer).
+ * Represents a vacant-bed listing created by a provider.
+ * Validation rules for ratings and reviews are enforced in the service/DTO layer.
  */
 @Entity
 @Table(name = "postings")
@@ -23,6 +23,9 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class Posting {
+
+    private static final int REVIEW_TEXT_LENGTH = 1000;
+    private static final int IMAGE_URL_LENGTH = 1000;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,7 +42,7 @@ public class Posting {
     @Column(name = "locality_and_landmark", nullable = false)
     private String localityAndLandmark;
 
-    /** e.g. "Chennai - Siruseri". Seekers filter by this. */
+    /** Campus/location label used by seekers while browsing and filtering rooms. */
     @Column(name = "office_campus", nullable = false)
     private String officeCampus;
 
@@ -62,24 +65,24 @@ public class Posting {
     @Column(name = "available_beds", nullable = false)
     private Integer availableBeds;
 
-    // Ratings/reviews are required for employees but optional for new joinees
-    // (candidates may know of a vacancy without having lived there).
+    // Ratings/reviews can be optional for users who know about a vacancy
+    // without having personally lived in the PG.
     @Column(name = "food_rating")
     private Integer foodRating;        // 1-5
 
-    @Column(name = "food_review", length = 1000)
+    @Column(name = "food_review", length = REVIEW_TEXT_LENGTH)
     private String foodReview;
 
     @Column(name = "service_rating")
     private Integer serviceRating;     // 1-5
 
-    @Column(name = "service_review", length = 1000)
+    @Column(name = "service_review", length = REVIEW_TEXT_LENGTH)
     private String serviceReview;
 
-    /** Zero or more image URLs (local /uploads/... or a Drive link). */
+    /** Zero or more listing image URLs, such as local uploads or external links. */
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "posting_images", joinColumns = @JoinColumn(name = "posting_id"))
-    @Column(name = "image_url", length = 1000)
+    @Column(name = "image_url", length = IMAGE_URL_LENGTH)
     @Builder.Default
     private List<String> imageUrls = new ArrayList<>();
 
@@ -87,6 +90,7 @@ public class Posting {
     @Column(nullable = false)
     private PostingStatus status;
 
+    /** Date and time when the listing was created. */
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 

@@ -1,3 +1,4 @@
+
 import { Component } from '@angular/core';
 
 /** STUB — implemented by M4 · Browse Rooms. See TEAM_PLAN.md. */
