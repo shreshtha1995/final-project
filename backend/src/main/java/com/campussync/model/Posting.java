@@ -24,6 +24,9 @@ import java.util.List;
 @Builder
 public class Posting {
 
+    private static final int REVIEW_TEXT_LENGTH = 1000;
+    private static final int IMAGE_URL_LENGTH = 1000;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -67,19 +70,19 @@ public class Posting {
     @Column(name = "food_rating")
     private Integer foodRating;        // 1-5
 
-    @Column(name = "food_review", length = 1000)
+    @Column(name = "food_review", length = REVIEW_TEXT_LENGTH)
     private String foodReview;
 
     @Column(name = "service_rating")
     private Integer serviceRating;     // 1-5
 
-    @Column(name = "service_review", length = 1000)
+    @Column(name = "service_review", length = REVIEW_TEXT_LENGTH)
     private String serviceReview;
 
     /** Zero or more listing image URLs, such as local uploads or external links. */
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "posting_images", joinColumns = @JoinColumn(name = "posting_id"))
-    @Column(name = "image_url", length = 1000)
+    @Column(name = "image_url", length = IMAGE_URL_LENGTH)
     @Builder.Default
     private List<String> imageUrls = new ArrayList<>();
 

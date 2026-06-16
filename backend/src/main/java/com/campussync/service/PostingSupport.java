@@ -66,6 +66,7 @@ public class PostingSupport {
         }
     }
 
+    // Convert blank strings to null. This is used in the query service so that the repository query can ignore nulls.
     public String blankToNull(String s) {
         if(s == null || s.isBlank()) {
             return null;
@@ -73,10 +74,8 @@ public class PostingSupport {
         return s;
     }
 
+    // Helper to check if a string is blank (null or empty after trimming).
     private boolean isBlank(String s) {
-        if(s == null || s.isBlank()) {
-            return true;
-        }
-        return false;
+        return s == null || s.isBlank();
     }
 }
