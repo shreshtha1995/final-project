@@ -6,7 +6,7 @@ import { DirectoryEntry, IdType, UserSummary } from '../../models/models';
 const API = 'http://localhost:8081/api/admin';
 
 
-// This is admin service that will be used to make API calls to the backend for admin related operations. 
+// This is admin service that will be used to make API calls to the backend for admin related operations.
 // Methods:
 //  to get the directory of user
 //  add a new user
@@ -21,7 +21,7 @@ export class AdminService {
     return this.http.get<DirectoryEntry[]>(`${API}/directory`);
   }
 
-  addId(cognizantId: string, idType: idType): Observable<DirectoryEntry> {
+  addId(cognizantId: string, idType: IdType): Observable<DirectoryEntry> {
     return this.http.post<DirectoryEntry>(`${API}/directory`, { cognizantId, idType });
   }
 

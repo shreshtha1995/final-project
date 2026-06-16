@@ -1,25 +1,52 @@
+<!-- ==========================================
+     PAGE HEADER
+     ========================================== -->
+<!-- Simple title section for the admin panel dashboard -->
 <div class="page-head">
   <h1>Company Directory</h1>
 </div>
 
+<!-- ==========================================
+     ANALYTICS / STATS CARDS
+     ========================================== -->
+<!-- This row displays a quick high-level summary of the directory's data.
+     It uses Angular Signals to dynamically update the numbers in real-time. -->
 <div class="stats">
+  <!-- Total ID Count: Shows the length of the entire raw data array -->
   <div class="stat card">
     <div class="num">{{ entries().length }}</div>
-    <div class="muted">Total IDs</div></div>
+    <div class="muted">Total IDs</div>
+  </div>
+
+  <!-- Employee Count: Calls a method to filter and count only 'EMPLOYEE' types -->
   <div class="stat card">
     <div class="num">{{ count('EMPLOYEE') }}</div>
-    <div class="muted">Employees</div></div>
+    <div class="muted">Employees</div>
+  </div>
+
+  <!-- Candidate Count: Calls a method to filter and count only 'CANDIDATE' types -->
   <div class="stat card">
     <div class="num">{{ count('CANDIDATE') }}</div>
-    <div class="muted">Candidates</div></div>
+    <div class="muted">Candidates</div>
+  </div>
+
+  <!-- Registered Count: Shows how many uploaded IDs have actually been claimed by real users -->
   <div class="stat card">
     <div class="num">{{ registeredCount() }}</div>
-    <div class="muted">Registered</div></div>
+    <div class="muted">Registered</div>
+  </div>
 </div>
 
+<!-- ==========================================
+     CREATION FORM (ADD NEW ID)
+     ========================================== -->
+<!-- This card allows administrators to whitelist a new Cognizant ID into the database. -->
 <div class="card add-card">
   <h3>Add a valid ID</h3>
   <div class="row add-row">
+
+    <!-- 1. ID Type Selector: Sets whether the new entry is an Employee or Candidate.
+         Changing this resets any active form errors. -->
     <div>
       <label class="req">ID type</label>
       <select [(ngModel)]="newType" (change)="formError.set('')">
@@ -27,26 +54,44 @@
         <option value="CANDIDATE">Candidate</option>
       </select>
     </div>
+
+    <!-- 2. Text Input: The actual ID string.
+         The placeholder text and invalid styling dynamically adapt based on the chosen type. -->
     <div>
       <label class="req">Cognizant ID</label>
       <input [(ngModel)]="newId" (input)="formError.set('')"
              [placeholder]="newType === 'EMPLOYEE' ? 'e.g. CTS1006' : 'e.g. CAND2004'"
              [class.invalid]="!!formError()" />
     </div>
+
+    <!-- 3. Submit Button: Triggers the add() function in the component class -->
     <div class="add-btn-col">
       <label aria-hidden="true">&nbsp;</label>
       <button class="gradient full-width" (click)="add()">Add ID</button>
     </div>
   </div>
-  <div class="hint">{{ newType === 'EMPLOYEE' ? 'Format: CTS followed by digits (e.g. CTS1006)' : 'Format: CAND followed by digits (e.g. CAND2004)' }}</div>
+
+  <!-- Helper Text: Shows formatting rules so the admin knows what syntax to type -->
+  <div class="hint">
+    {{ newType === 'EMPLOYEE' ? 'Format: CTS followed by digits (e.g. CTS1006)' : 'Format: CAND followed by digits (e.g. CAND2004)' }}
+  </div>
+
+  <!-- Error Block: Only renders if a validation check fails (e.g. bad formatting) -->
   @if (formError()) {
-    <p class="error">{{ formError() }}</p>
+  <p class="error">{{ formError() }}</p>
   }
+
+  <!-- Success Block: Only renders if the ID was successfully saved to the database -->
   @if (message()) {
-    <p class="success">{{ message() }}</p>
+  <p class="success">{{ message() }}</p>
   }
 </div>
 
+<!-- ==========================================
+     FILTER / TOOLBAR CONTROLS
+     ========================================== -->
+<!-- Dropdown that filters the main data table below.
+     When changed, it updates the filter state and forces pagination back to page 1. -->
 <div class="toolbar">
   <div>
     <label>Show</label>
@@ -58,6 +103,10 @@
   </div>
 </div>
 
+<!-- ==========================================
+     DATA DIRECTORY TABLE
+     ========================================== -->
+<!-- Main layout holding the directory rows and the bottom pagination controls -->
 <div class="card">
   <table>
     <thead>
@@ -66,47 +115,72 @@
       <th class="col-center">Type</th>
       <th class="col-center">Status</th>
       <th>Registered user</th>
-      <th></th>
+      <th></th> <!-- Empty header for the Action/Delete column -->
     </tr>
     </thead>
     <tbody>
+
+    <!-- Loop: Renders a row for every item in the current 'paged' signal slice -->
     @for (e of paged(); track e.id) {
     <tr>
+      <!-- Column 1: The unique corporate ID -->
       <td><strong>{{ e.cognizantId }}</strong></td>
+
+      <!-- Column 2: Plain text translation of the ID type enum -->
       <td class="col-center">{{ e.idType === 'EMPLOYEE' ? 'Employee' : 'Candidate' }}</td>
+
+      <!-- Column 3: Status Pill Badge (Green if claimed/registered, Grey if open) -->
       <td class="col-center">
         @if (e.registered) { <span class="badge green">Registered</span> }
         @else { <span class="badge">Available</span> }
       </td>
+
+      <!-- Column 4: Owner details. Maps the ID to a real user profile if it exists, otherwise drops a dash -->
       <td>
         @if (userFor(e.cognizantId); as u) {
         <strong>{{ u.name }}</strong> <span class="muted">· {{ u.email }}</span>
-        } @else { <span class="muted">—</span> }
+        } @else {
+        <span class="muted">—</span>
+        }
       </td>
+
+      <!-- Column 5: Two-step confirmation delete action.
+           Clicking 'Delete' swaps the layout inline to ask 'Are you sure?' before firing the remove() action. -->
       <td style="text-align:right">
         @if (confirmId() === e.id) {
         <span class="confirm-inline">
-                    <span class="muted">{{ e.registered ? 'Delete this user?' : 'Delete ID?' }}</span>
-                    <button class="link danger-link" (click)="remove(e)">Yes</button>
-                    <button class="link" (click)="confirmId.set(null)">No</button>
-                  </span>
+              <span class="muted">{{ e.registered ? 'Delete this user?' : 'Delete ID?' }}</span>
+              <button class="link danger-link" (click)="remove(e)">Yes</button>
+              <button class="link" (click)="confirmId.set(null)">No</button>
+            </span>
         } @else {
         <button class="link danger-link" (click)="confirmId.set(e.id)">Delete</button>
         }
       </td>
     </tr>
     } @empty {
+    <!-- Empty State Fallback: Shows up automatically if no records match the chosen filter -->
     <tr><td colspan="5" class="muted">No IDs to show.</td></tr>
     }
     </tbody>
   </table>
 
+  <!-- ==========================================
+       PAGINATION CONTROLS
+       ========================================== -->
+  <!-- This whole section is hidden completely if the total records fit onto just 1 single page -->
   @if (totalPages() > 1) {
   <div class="pagination">
+    <!-- Previous Page Button: Disables itself if the admin is sitting on page 1 -->
     <button (click)="prev()" [disabled]="page() === 1">‹ Prev</button>
+
+    <!-- Page Numbers Loop: Generates clickable buttons for each calculated page.
+         Highlights the current active page with the '.active' CSS class. -->
     @for (p of pages(); track p) {
     <button [class.active]="p === page()" (click)="page.set(p)">{{ p }}</button>
     }
+
+    <!-- Next Page Button: Disables itself if the admin reaches the final page -->
     <button (click)="next()" [disabled]="page() === totalPages()">Next ›</button>
   </div>
   }
